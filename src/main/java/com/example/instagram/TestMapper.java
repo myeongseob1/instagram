@@ -1,11 +1,11 @@
 package com.example.instagram;
 
 
-import com.example.instagram.Dto.TestDto;
-import org.springframework.stereotype.Repository;
+import com.example.instagram.dto.TestDto;
+import org.apache.ibatis.annotations.Mapper;
 
-@Repository
-public interface mapper {
+@Mapper
+public interface TestMapper {
 
     TestDto getInfo(int id);
 
