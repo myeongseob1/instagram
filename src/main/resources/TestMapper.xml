@@ -3,8 +3,13 @@
 
 <mapper namespace="com.example.instagram.TestMapper">
 
-    <select id="getInfo" resultType="com.example.instagram.dto.TestDto">
+    <select id="getTestInfo" resultType="com.example.instagram.dto.TestDto">
         SELECT * FROM memberInfo where id = #{id}
     </select>
+
+    <insert id="registerTestMember">
+        INSERT INTO memberInfo(id,name) VALUES (#{id},#{name})
+    </insert>
+
 
 </mapper>

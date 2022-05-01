@@ -7,6 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TestMapper {
 
-    TestDto getInfo(int id);
-
+    TestDto getTestInfo(String id);
+    int registerTestMember(String id, String name);
 }

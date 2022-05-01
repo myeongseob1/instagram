@@ -2,8 +2,12 @@ package com.example.instagram.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+
 @Data
 public class TestDto {
-    private int id;
+    @NotEmpty
+    private String id;
+    @NotEmpty
     private String name;
 }

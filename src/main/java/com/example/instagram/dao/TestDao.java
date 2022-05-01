@@ -17,7 +17,11 @@ public class TestDao{
     }
 
 
-    public TestDto getInfo(int id){
-        return testMapper.getInfo(id);
+    public TestDto getTestInfo(String id){
+        return testMapper.getTestInfo(id);
     }
+    public int registerTestMember(String id, String name){
+        return testMapper.registerTestMember(id,name);
+    }
+
 }
