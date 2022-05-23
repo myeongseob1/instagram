@@ -14,6 +14,7 @@ import javax.validation.Valid;
 @Slf4j
 @Validated
 @RestController
+@CrossOrigin("*")
 public class MainController {
 
     private final TestDao testDao;
@@ -31,16 +32,15 @@ public class MainController {
     @GetMapping(value = "/test/info")
     public TestDto getTestInfo(@RequestParam String id){
         if(StringUtils.isEmpty(id)){
-            throw new NullPointerException("id가 null값 입니다");
+            throw new NullPointerException("empty id");
         }
         return testDao.getTestInfo(id);
     }
-
     @PostMapping(value = "/test/info", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public String registerTestMember(@RequestBody @Valid TestDto testMember){
         TestDto existInfo = testDao.getTestInfo(testMember.getId());
         if(existInfo != null){
-            throw new RuntimeException("중복된 값 입니다");
+            throw new RuntimeException("duplicate id");
         }
         int result = testDao.registerTestMember(testMember.getId(),testMember.getName());
         if(result>0) {
