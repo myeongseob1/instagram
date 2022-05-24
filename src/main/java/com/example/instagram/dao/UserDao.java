@@ -16,5 +16,8 @@ public class UserDao {
         return userMapper.getUser(userId,userPw);
     }
 
+    public int insertUserSecure(String userId, String publicKey, String privateKey){
+        return userMapper.insertMemberSecure(userId,publicKey,privateKey);
+    }
 
 }

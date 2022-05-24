@@ -38,13 +38,27 @@ public class UserService {
 
     //SHA256 - 단방향 -> PW 같이 대조 이외의 용도로 사용할 이유가 없는 것들은 단방향 암호화
     //RSA - 양방향 -> EMAIL 같이 대조 이외의 용도로 사용할 이유가 있으면 양방향 암호화
-    public Member register(UserDto userDto) throws NoSuchAlgorithmException {
+    public Member register(UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException {
         //pw SHA256
         String userPw = encrypt(userDto.getUserPw());
         userDto.setUserPw(userPw);
 
         //email, phone RSA
         KeyPair keyPair = genRSAKeyPair();
+        int result = userDao.insertUserSecure(userDto.getUserId(), keyPair.getPublic().toString(), keyPair.getPrivate().toString());
+        if(result <= 0){
+            log.error("DB insert Error");
+            return null;
+        }
+
+        String email = "aud_tjq@naver.com";
+
+        String encEmail = encryptRSA(email, keyPair.getPublic());
+
+        if(email.equals(decryptRSA(encEmail,keyPair.getPrivate()))){
+            log.info("success");
+        }
+
         return null;
     }
 
