@@ -1,9 +1,9 @@
 # instagram
-my instagram project (SNS - 게시판, 사진업로드, 팔로우, 좋아요, DirectMessage(채팅), )
+my instagram project (SNS - 게시판, 사진업로드, 댓글, 팔로우, 좋아요, DirectMessage(채팅) )
 
 # start.spring.io 에서 프로젝트 생성
 ##### project : maven Project
 ##### Language : Java
 ##### Spring Boot : 2.6.7 version
 ##### Packaging : Jar
-##### Dependencies : Spring Web, tomcat. mysql driver, lombok
+##### Dependencies : Spring Web, mysql driver, lombok
