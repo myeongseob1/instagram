@@ -1,4 +1,4 @@
-package com.example.instagram;
+package com.example.instagram.mapper;
 
 
 import com.example.instagram.dto.TestDto;

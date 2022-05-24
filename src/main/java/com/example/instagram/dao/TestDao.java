@@ -2,7 +2,7 @@ package com.example.instagram.dao;
 
 
 import com.example.instagram.dto.TestDto;
-import com.example.instagram.TestMapper;
+import com.example.instagram.mapper.TestMapper;
 import org.springframework.stereotype.Repository;
 
 

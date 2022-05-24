@@ -1,4 +1,4 @@
-package com.example.instagram;
+package com.example.instagram.controller;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
