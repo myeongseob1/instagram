@@ -20,4 +20,9 @@ public class UserDao {
         return userMapper.insertMemberSecure(userId,publicKey,privateKey);
     }
 
+    public int insertUser(String name, String email, String userId, String userPw, String phone, String nickname){
+        return userMapper.insertMember(name,email,userId,userPw,phone,nickname);
+    }
+
+
 }

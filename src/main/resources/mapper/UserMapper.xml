@@ -11,6 +11,10 @@
         INSERT INTO member_secure(user_id,private_key,public_key) VALUES (#{userId},#{privateKey},#{publicKey})
     </insert>
 
+    <insert id="insertMember">
+        INSERT INTO member(name,email,user_id,user_pw,phone,nickname) VALUES (#{name},#{email},#{userId},#{userPw},#{phone},#{nickname})
+    </insert>
+
 
 
 </mapper>

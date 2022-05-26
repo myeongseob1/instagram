@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 @Slf4j
 @Validated
@@ -36,22 +37,24 @@ public class UserController {
 
     @ApiOperation(value="회원가입",notes = "user의 정보를 입력하여 회원가입")
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String register(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException {
-        userService.register(userDto);
-        return null;
+    public String register(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+        String result = userService.register(userDto);
+        if(result == null){
+            return "register fail";
+        }
+        return "register success";
     }
 
     //consumes : content-type - 이 타입으로 쓰겠다 , produces: accept-type - 이 타입으로 보내주겠다
     //메소드 이름은 동사 (coding convention)
     @ApiOperation(value="로그인",notes = "user의 id와 pw 인증을 통한 로그인 기능")
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String login(@RequestBody @Valid UserDto userDto){
+    public String login(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException {
         Member member = userService.login(userDto.getUserId(), userDto.getUserPw());
 
         if(member == null){
             return "login fail";
         }
-
         return "login success";
     }
 

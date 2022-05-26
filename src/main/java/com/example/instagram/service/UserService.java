@@ -26,8 +26,9 @@ public class UserService {
         this.userDao = userDao;
     }
 
-    public Member login(String userId, String userPw) {
-        Member member = userDao.getUser(userId, userPw);
+    public Member login(String userId, String userPw) throws NoSuchAlgorithmException {
+        String encPw = encrypt(userPw);
+        Member member = userDao.getUser(userId, encPw);
         if(member == null){
             log.warn("user not exist");
             return null;
@@ -38,28 +39,38 @@ public class UserService {
 
     //SHA256 - 단방향 -> PW 같이 대조 이외의 용도로 사용할 이유가 없는 것들은 단방향 암호화
     //RSA - 양방향 -> EMAIL 같이 대조 이외의 용도로 사용할 이유가 있으면 양방향 암호화
-    public Member register(UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException {
+
+    public String register(UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException, InvalidKeySpecException {
         //pw SHA256
         String userPw = encrypt(userDto.getUserPw());
-        userDto.setUserPw(userPw);
+
 
         //email, phone RSA
         KeyPair keyPair = genRSAKeyPair();
-        int result = userDao.insertUserSecure(userDto.getUserId(), keyPair.getPublic().toString(), keyPair.getPrivate().toString());
-        if(result <= 0){
-            log.error("DB insert Error");
+        String publicKey = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+        String privateKey = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
+
+
+        int keyResult = userDao.insertUserSecure(userDto.getUserId(), keyPair.getPublic().toString(), keyPair.getPrivate().toString());
+        if(keyResult <= 0){
+            log.error("DB key insert Error");
             return null;
         }
 
-        String email = "aud_tjq@naver.com";
+        String email = userDto.getEmail();
 
-        String encEmail = encryptRSA(email, keyPair.getPublic());
+        String encEmail =  encryptRSA(email, getPublicKeyFromBase64Encrypted(publicKey));
 
-        if(email.equals(decryptRSA(encEmail,keyPair.getPrivate()))){
+        if (email.equals(decryptRSA(encEmail, getPrivateKeyFromBase64Encrypted(privateKey)))) {
             log.info("success");
         }
+        int result = userDao.insertUser(userDto.getName(),encEmail,userDto.getUserId(),userPw,userDto.getPhone(),userDto.getNickname());
 
-        return null;
+        if(result <= 0){
+            log.error("DB user insert error");
+            return null;
+        }
+        return "success";
     }
 
     /**
@@ -82,9 +93,6 @@ public class UserService {
         return builder.toString();
     }
 
-    /**
-     *
-     */
     /**
      * 1024비트 RSA 키쌍을 생성
      */

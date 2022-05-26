@@ -9,4 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
     Member getUser(String userId, String userPw);
     int insertMemberSecure(String userId,String privateKey, String publicKey);
+    int insertMember(String name, String email, String userId, String userPw, String phone, String nickname);
 }
