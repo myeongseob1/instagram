@@ -2,8 +2,10 @@ package com.example.instagram.service;
 
 import com.example.instagram.dao.UserDao;
 import com.example.instagram.domain.Member;
+import com.example.instagram.domain.MemberSecure;
 import com.example.instagram.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
@@ -16,6 +18,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -26,13 +29,21 @@ public class UserService {
         this.userDao = userDao;
     }
 
-    public Member login(String userId, String userPw) throws NoSuchAlgorithmException {
-        String encPw = encrypt(userPw);
-        Member member = userDao.getUser(userId, encPw);
-        if(member == null){
+    public Member login(String userId, String userPw) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException {
+        Member member = userDao.getUser(userId);
+        if(member == null || StringUtils.isBlank(member.getUserId())){
             log.warn("user not exist");
             return null;
         }
+        if(!member.getUserPw().equals(encrypt(userPw))){
+            log.warn("password error");
+            return null;
+        }
+        MemberSecure memberSecure = userDao.getUserSecure(member.getMemberId());
+        String privateKey = memberSecure.getPrivateKey();
+        log.info(privateKey);
+        String decEmail =  decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey));
+        log.info(decEmail);
         return member;
     }
 
@@ -41,30 +52,34 @@ public class UserService {
     //RSA - 양방향 -> EMAIL 같이 대조 이외의 용도로 사용할 이유가 있으면 양방향 암호화
 
     public String register(UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException, InvalidKeySpecException {
+        String memberId = UUID.randomUUID().toString();
+
         //pw SHA256
         String userPw = encrypt(userDto.getUserPw());
 
-
-        //email, phone RSA
+        //email, phone RSA 공개키와 개인키 발급받기
         KeyPair keyPair = genRSAKeyPair();
         String publicKey = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
         String privateKey = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
 
+        PublicKey pk = keyPair.getPublic();
+        //공개키를 활용하여 암호화 하기
+        String encEmail =  encryptRSA(userDto.getEmail(), pk);
+        String encPhone = encryptRSA(userDto.getPhone(), pk);
 
-        int keyResult = userDao.insertUserSecure(userDto.getUserId(), keyPair.getPublic().toString(), keyPair.getPrivate().toString());
-        if(keyResult <= 0){
+
+        int keyResult = userDao.insertUserSecure(memberId,privateKey,publicKey);
+        if(keyResult <= 0) {
             log.error("DB key insert Error");
             return null;
         }
 
-        String email = userDto.getEmail();
-
-        String encEmail =  encryptRSA(email, getPublicKeyFromBase64Encrypted(publicKey));
-
-        if (email.equals(decryptRSA(encEmail, getPrivateKeyFromBase64Encrypted(privateKey)))) {
+        if (userDto.getEmail().equals(decryptRSA(encEmail, getPrivateKeyFromBase64Encrypted(privateKey)))) {
             log.info("success");
         }
-        int result = userDao.insertUser(userDto.getName(),encEmail,userDto.getUserId(),userPw,userDto.getPhone(),userDto.getNickname());
+
+        int result = userDao.insertUser(memberId, userDto.getName(),encEmail,userDto.getUserId(),userPw,encPhone,userDto.getNickname());
+
 
         if(result <= 0){
             log.error("DB user insert error");

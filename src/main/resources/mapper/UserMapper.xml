@@ -4,15 +4,20 @@
 <mapper namespace="com.example.instagram.mapper.UserMapper">
 
     <select id="getUser" resultType="com.example.instagram.domain.Member">
-        SELECT * FROM member WHERE user_id = #{userId} AND user_pw = #{userPw}
+        SELECT * FROM member WHERE user_id = #{userId}
     </select>
 
+    <select id="getUserSecure" resultType="com.example.instagram.domain.MemberSecure">
+        SELECT * FROM member_secure WHERE member_id = #{memberId}
+    </select>
+
+
     <insert id="insertMemberSecure">
-        INSERT INTO member_secure(user_id,private_key,public_key) VALUES (#{userId},#{privateKey},#{publicKey})
+        INSERT INTO member_secure(member_id,private_key,public_key) VALUES (#{memberId},#{privateKey},#{publicKey})
     </insert>
 
     <insert id="insertMember">
-        INSERT INTO member(name,email,user_id,user_pw,phone,nickname) VALUES (#{name},#{email},#{userId},#{userPw},#{phone},#{nickname})
+        INSERT INTO member(member_id,name,email,user_id,user_pw,phone,nickname,register_time,recent_login_time) VALUES (#{memberId},#{name},#{email},#{userId},#{userPw},#{phone},#{nickname},utc_timestamp,null)
     </insert>
 
 

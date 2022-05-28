@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserDto {
-    private int memberId;
+    private String memberId;
     private String name;
     private String email;
     @NotBlank

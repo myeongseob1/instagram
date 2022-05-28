@@ -49,13 +49,13 @@ public class UserController {
     //메소드 이름은 동사 (coding convention)
     @ApiOperation(value="로그인",notes = "user의 id와 pw 인증을 통한 로그인 기능")
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String login(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException {
+    public Member login(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeySpecException, BadPaddingException, InvalidKeyException {
         Member member = userService.login(userDto.getUserId(), userDto.getUserPw());
 
         if(member == null){
-            return "login fail";
+            return null;
         }
-        return "login success";
+        return member;
     }
 
 
