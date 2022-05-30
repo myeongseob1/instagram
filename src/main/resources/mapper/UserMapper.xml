@@ -20,6 +20,9 @@
         INSERT INTO member(member_id,name,email,user_id,user_pw,phone,nickname,register_time,recent_login_time) VALUES (#{memberId},#{name},#{email},#{userId},#{userPw},#{phone},#{nickname},utc_timestamp,null)
     </insert>
 
+    <update id="updateLoginTime">
+        UPDATE member SET recent_login_time = utc_timestamp WHERE member_id = #{memberId}
+    </update>
 
 
 </mapper>

@@ -39,11 +39,19 @@ public class UserService {
             log.warn("password error");
             return null;
         }
+
         MemberSecure memberSecure = userDao.getUserSecure(member.getMemberId());
         String privateKey = memberSecure.getPrivateKey();
-        log.info(privateKey);
         String decEmail =  decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey));
-        log.info(decEmail);
+        String decPhone = decryptRSA(member.getPhone(), getPrivateKeyFromBase64Encrypted(privateKey));
+        int loginTimeResult = userDao.updateLoginTime(member.getMemberId());
+        if(loginTimeResult <= 0){
+            log.warn("Login Time error");
+        }
+
+        member.setEmail(decEmail);
+        member.setPhone(decPhone);
+
         return member;
     }
 

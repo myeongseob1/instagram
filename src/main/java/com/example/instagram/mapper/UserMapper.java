@@ -10,4 +10,5 @@ public interface UserMapper {
     MemberSecure getUserSecure(String userId);
     int insertMemberSecure(String memberId,String privateKey, String publicKey);
     int insertMember(String memberId,String name, String email, String userId, String userPw, String phone, String nickname);
+    int updateLoginTime(String memberId);
 }

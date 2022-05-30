@@ -31,6 +31,9 @@ public class UserDao {
         return userMapper.insertMemberSecure(memberId,privateKey,publicKey);
     }
 
+    public int updateLoginTime(String memberId){
+        return userMapper.updateLoginTime(memberId);
+    }
 
 
 }
