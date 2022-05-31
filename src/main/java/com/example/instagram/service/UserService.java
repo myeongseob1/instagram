@@ -42,15 +42,21 @@ public class UserService {
 
         MemberSecure memberSecure = userDao.getUserSecure(member.getMemberId());
         String privateKey = memberSecure.getPrivateKey();
-        String decEmail =  decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey));
-        String decPhone = decryptRSA(member.getPhone(), getPrivateKeyFromBase64Encrypted(privateKey));
         int loginTimeResult = userDao.updateLoginTime(member.getMemberId());
         if(loginTimeResult <= 0){
             log.warn("Login Time error");
         }
+        if(!StringUtils.isBlank(member.getEmail())){
+            member.setEmail(decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey)));
+            if (member.getEmail().equals(decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey)))) {
+                log.info("success");
+            }
 
-        member.setEmail(decEmail);
-        member.setPhone(decPhone);
+        }
+        if(!StringUtils.isBlank(member.getPhone())){
+            member.setPhone(decryptRSA(member.getPhone(), getPrivateKeyFromBase64Encrypted(privateKey)));
+        }
+
 
         return member;
     }
@@ -72,8 +78,17 @@ public class UserService {
 
         PublicKey pk = keyPair.getPublic();
         //공개키를 활용하여 암호화 하기
-        String encEmail =  encryptRSA(userDto.getEmail(), pk);
-        String encPhone = encryptRSA(userDto.getPhone(), pk);
+
+        if(!StringUtils.isBlank(userDto.getEmail())){
+            userDto.setEmail(encryptRSA(userDto.getEmail(), pk));
+            if (userDto.getEmail().equals(decryptRSA(userDto.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey)))) {
+                log.info("success");
+            }
+
+        }
+        if(!StringUtils.isBlank(userDto.getPhone())){
+            userDto.setPhone(encryptRSA(userDto.getPhone(), pk));
+        }
 
 
         int keyResult = userDao.insertUserSecure(memberId,privateKey,publicKey);
@@ -82,18 +97,15 @@ public class UserService {
             return null;
         }
 
-        if (userDto.getEmail().equals(decryptRSA(encEmail, getPrivateKeyFromBase64Encrypted(privateKey)))) {
-            log.info("success");
-        }
 
-        int result = userDao.insertUser(memberId, userDto.getName(),encEmail,userDto.getUserId(),userPw,encPhone,userDto.getNickname());
+        int result = userDao.insertUser(memberId, userDto.getName(),userDto.getEmail(),userDto.getUserId(),userPw,userDto.getPhone(),userDto.getNickname());
 
 
         if(result <= 0){
             log.error("DB user insert error");
             return null;
         }
-        return "success";
+        return memberId;
     }
 
     /**

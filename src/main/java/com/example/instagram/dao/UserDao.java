@@ -2,6 +2,7 @@ package com.example.instagram.dao;
 
 import com.example.instagram.domain.Member;
 import com.example.instagram.domain.MemberSecure;
+import com.example.instagram.dto.UserDto;
 import com.example.instagram.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ public class UserDao {
     }
 
 
-    public int insertUser(String memberId,String name, String email, String userId, String userPw, String phone, String nickname){
+    public int insertUser(String memberId, String name, String email, String userId, String userPw, String phone, String nickname){
         return userMapper.insertMember(memberId,name,email,userId,userPw,phone,nickname);
     }
 
