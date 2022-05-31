@@ -1,7 +1,6 @@
 package com.example.instagram.controller;
 
 import com.example.instagram.domain.Member;
-import com.example.instagram.dto.TestDto;
 import com.example.instagram.dto.UserDto;
 import com.example.instagram.service.UserService;
 import io.swagger.annotations.Api;
@@ -35,7 +34,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @ApiOperation(value="회원가입",notes = "user의 정보를 입력하여 회원가입")
+    @ApiOperation(value="회원가입",notes = "사용자의 정보 입력후 회원가입")
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String register(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
         String result = userService.register(userDto);
@@ -45,7 +44,7 @@ public class UserController {
         return "register success";
     }
 
-    @ApiOperation(value = "ID 중복확인",notes = "회원가입시 아이디를 중복확인")
+    @ApiOperation(value = "ID 중복확인",notes = "회원가입시 아이디 중복확인")
     @GetMapping(value="/idValidChk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String idValidChk(@RequestParam @Valid String userId){
         String result = userService.idValidChk(userId);

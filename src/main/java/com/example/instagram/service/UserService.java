@@ -59,7 +59,8 @@ public class UserService {
     }
 
     public String idValidChk(String userId){
-        if(userDao.getUser(userId)!=null){
+        Member member = userDao.getUser(userId);
+        if(member != null){
             return null;
         }
         return "success";
@@ -67,7 +68,6 @@ public class UserService {
 
     //SHA256 - 단방향 -> PW 같이 대조 이외의 용도로 사용할 이유가 없는 것들은 단방향 암호화
     //RSA - 양방향 -> EMAIL 같이 대조 이외의 용도로 사용할 이유가 있으면 양방향 암호화
-
     public String register(UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException, InvalidKeySpecException {
         String memberId = UUID.randomUUID().toString();
 
