@@ -29,6 +29,7 @@ public class UserService {
         this.userDao = userDao;
     }
 
+
     public Member login(String userId, String userPw) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException {
         Member member = userDao.getUser(userId);
         if(member == null || StringUtils.isBlank(member.getUserId())){
@@ -48,19 +49,21 @@ public class UserService {
         }
         if(!StringUtils.isBlank(member.getEmail())){
             member.setEmail(decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey)));
-            if (member.getEmail().equals(decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey)))) {
-                log.info("success");
-            }
 
         }
         if(!StringUtils.isBlank(member.getPhone())){
             member.setPhone(decryptRSA(member.getPhone(), getPrivateKeyFromBase64Encrypted(privateKey)));
         }
 
-
         return member;
     }
 
+    public String idValidChk(String userId){
+        if(userDao.getUser(userId)!=null){
+            return null;
+        }
+        return "success";
+    }
 
     //SHA256 - 단방향 -> PW 같이 대조 이외의 용도로 사용할 이유가 없는 것들은 단방향 암호화
     //RSA - 양방향 -> EMAIL 같이 대조 이외의 용도로 사용할 이유가 있으면 양방향 암호화

@@ -1,5 +1,6 @@
 package com.example.instagram.service;
 
+import com.example.instagram.domain.Member;
 import com.example.instagram.dto.UserDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +23,13 @@ public class UserServiceTest {
         UserDto userDto = new UserDto();
         userDto.setUserId("abcdef");
         userDto.setUserPw("123123");
-        //when
-        String memberId = userService.register(userDto);
 
+        //when
+        String registerId = userService.register(userDto);
+        String loginId = userService.login(userDto.getUserId(),userDto.getUserPw()).getMemberId();
 
         //then
-        assertEquals(userService.login(userDto.getUserId(),userDto.getUserPw()).getMemberId(),memberId);
+        assertEquals(loginId,registerId);
     }
 
 }

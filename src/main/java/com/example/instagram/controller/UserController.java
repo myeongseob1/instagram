@@ -45,6 +45,15 @@ public class UserController {
         return "register success";
     }
 
+    @ApiOperation(value = "ID 중복확인",notes = "회원가입시 아이디를 중복확인")
+    @GetMapping(value="/idValidChk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String idValidChk(@RequestParam @Valid String userId){
+        String result = userService.idValidChk(userId);
+        if(result==null){
+            return "ID Valid Check Fail";
+        }
+        return "ID Valid Check Success";
+    }
     //consumes : content-type - 이 타입으로 쓰겠다 , produces: accept-type - 이 타입으로 보내주겠다
     //메소드 이름은 동사 (coding convention)
     @ApiOperation(value="로그인",notes = "user의 id와 pw 인증을 통한 로그인 기능")
