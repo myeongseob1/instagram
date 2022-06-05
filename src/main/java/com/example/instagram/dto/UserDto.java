@@ -14,7 +14,6 @@ public class UserDto {
     @NotBlank(message = "패스워드를 입력하세요")
     private String userPw;
     private String phone;
-    @NotBlank(message = "닉네임을 입력하세요")
     private String nickname;
     private String privateKey;
     private String publicKey;

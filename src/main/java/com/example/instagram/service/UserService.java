@@ -24,19 +24,20 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserDao userDao;
-
-    public UserService(UserDao userDao) {
+    private final JwtTokenService jwtTokenService;
+    public UserService(UserDao userDao, JwtTokenService jwtTokenService) {
         this.userDao = userDao;
+        this.jwtTokenService = jwtTokenService;
     }
 
 
-    public Member login(String userId, String userPw) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException {
-        Member member = userDao.getUser(userId);
+    public Member login(UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException {
+        Member member = userDao.getUser(userDto.getUserId());
         if(member == null || StringUtils.isBlank(member.getUserId())){
             log.warn("user not exist");
             return null;
         }
-        if(!member.getUserPw().equals(encrypt(userPw))){
+        if(!member.getUserPw().equals(encrypt(userDto.getUserPw()))){
             log.warn("password error");
             return null;
         }
@@ -49,11 +50,11 @@ public class UserService {
         }
         if(!StringUtils.isBlank(member.getEmail())){
             member.setEmail(decryptRSA(member.getEmail(), getPrivateKeyFromBase64Encrypted(privateKey)));
-
         }
         if(!StringUtils.isBlank(member.getPhone())){
             member.setPhone(decryptRSA(member.getPhone(), getPrivateKeyFromBase64Encrypted(privateKey)));
         }
+        member.setJwtToken(jwtTokenService.createToken(member.getUserId(),member.getName(),member.getEmail()));
 
         return member;
     }
@@ -100,9 +101,7 @@ public class UserService {
             return null;
         }
 
-
         int result = userDao.insertUser(memberId, userDto.getName(),userDto.getEmail(),userDto.getUserId(),userPw,userDto.getPhone(),userDto.getNickname());
-
 
         if(result <= 0){
             log.error("DB user insert error");

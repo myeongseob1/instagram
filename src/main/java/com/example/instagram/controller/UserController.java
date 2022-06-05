@@ -58,7 +58,7 @@ public class UserController {
     @ApiOperation(value="로그인",notes = "user의 id와 pw 인증을 통한 로그인 기능")
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Member login(@RequestBody @Valid UserDto userDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeySpecException, BadPaddingException, InvalidKeyException {
-        Member member = userService.login(userDto.getUserId(), userDto.getUserPw());
+        Member member = userService.login(userDto);
 
         if(member == null){
             return null;
