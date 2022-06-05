@@ -12,4 +12,5 @@ public class Member {
     private String phone;
     private String nickname;
     private String jwtToken;
+
 }

@@ -1,6 +1,5 @@
 package com.example.instagram.service;
 
-import com.example.instagram.domain.Member;
 import com.example.instagram.dto.UserDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +19,7 @@ public class UserServiceTest {
     @Autowired UserService userService;
 
     @Test
-    public void 회원가입() throws Exception{
+    public void 회원가입후로그인() throws Exception{
         //given
         UserDto userDto = new UserDto();
         userDto.setUserId("user1");
@@ -42,15 +41,16 @@ public class UserServiceTest {
         user1.setUserId("user1");
         user1.setUserPw("123123");
 
-        UserDto user2 = new UserDto();
-        user2.setUserId("user1");
-        user2.setUserPw("123123");
-
-
 
         //when
-        
+        String registerId = userService.register(user1);
+        String validCheckResult = userService.idValidChk("user1");
+        String validCheckResult2 = userService.idValidChk("user2");
+
         //then
+        //중복확인 실패시 null값이 반환된다
+        assertNull(validCheckResult);
+        assertNotNull(validCheckResult2);
     }
 
 }

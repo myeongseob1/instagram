@@ -25,9 +25,11 @@ import java.util.UUID;
 public class UserService {
     private final UserDao userDao;
     private final JwtTokenService jwtTokenService;
-    public UserService(UserDao userDao, JwtTokenService jwtTokenService) {
+    private final RedisService redisService;
+    public UserService(UserDao userDao, JwtTokenService jwtTokenService, RedisService redisService) {
         this.userDao = userDao;
         this.jwtTokenService = jwtTokenService;
+        this.redisService = redisService;
     }
 
 
@@ -55,7 +57,7 @@ public class UserService {
             member.setPhone(decryptRSA(member.getPhone(), getPrivateKeyFromBase64Encrypted(privateKey)));
         }
         member.setJwtToken(jwtTokenService.createToken(member.getUserId(),member.getName(),member.getEmail()));
-
+        redisService.setValues(member.getJwtToken(),member.getMemberId());
         return member;
     }
 
