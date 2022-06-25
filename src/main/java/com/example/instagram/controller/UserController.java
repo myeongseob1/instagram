@@ -2,6 +2,7 @@ package com.example.instagram.controller;
 
 import com.example.instagram.domain.Member;
 import com.example.instagram.dto.UserDto;
+import com.example.instagram.dto.VerifyDto;
 import com.example.instagram.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,6 +66,14 @@ public class UserController {
         }
         return member;
     }
+    @ApiOperation(value="verify",notes = "사용중인 User가 맞는지 검증하는 과정")
+    @PostMapping(value = "/verify", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String verifyUser(@RequestBody @Valid VerifyDto verifyDto) {
+        String result = userService.verify(verifyDto);
 
-
+        if(result==null){
+            return "Id verify Check Fail";
+        }
+        return "ID verify Check Success";
+    }
 }

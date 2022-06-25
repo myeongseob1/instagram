@@ -4,6 +4,7 @@ import com.example.instagram.dao.UserDao;
 import com.example.instagram.domain.Member;
 import com.example.instagram.domain.MemberSecure;
 import com.example.instagram.dto.UserDto;
+import com.example.instagram.dto.VerifyDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class UserService {
             member.setPhone(decryptRSA(member.getPhone(), getPrivateKeyFromBase64Encrypted(privateKey)));
         }
         member.setJwtToken(jwtTokenService.createToken(member.getUserId(),member.getName(),member.getEmail()));
-        redisService.setValues(member.getJwtToken(),member.getMemberId());
+        redisService.setValues(member.getMemberId(),member.getJwtToken());
         return member;
     }
 
@@ -110,6 +111,14 @@ public class UserService {
             return null;
         }
         return memberId;
+    }
+
+    public String verify(VerifyDto verifyDto){
+        String verifyToken = redisService.getValues(verifyDto.getMemberId());
+        if(!verifyDto.getJwtToken().equals(verifyToken)){
+            return null;
+        }
+        return "success";
     }
 
     /**
