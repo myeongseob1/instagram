@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.instagram.mapper.PostingMapper">
+
+    <select id="getPosting" resultType="com.example.instagram.domain.Posting">
+        SELECT * FROM member WHERE posting_id = #{postingId}
+    </select>
+
+    <insert id="insertPosting">
+        INSERT INTO posting(member_id,title,contents,register_time) VALUES (#{memberId},#{title},#{contents},utc_timestamp)
+    </insert>
+
+</mapper>
