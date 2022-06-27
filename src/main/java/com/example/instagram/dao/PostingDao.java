@@ -1,9 +1,12 @@
 package com.example.instagram.dao;
 
-import com.example.instagram.domain.Posting;
+import com.example.instagram.dto.PostingFindDto;
+import com.example.instagram.dto.PostingListDto;
 import com.example.instagram.mapper.PostingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @Slf4j
@@ -14,10 +17,13 @@ public class PostingDao {
         this.postingMapper = postingMapper;
     }
 
-    public Posting getPosting(String postingId){
-        return postingMapper.getPosting(postingId);
+    public PostingFindDto selectPostingById(Long postingId){
+        log.info("dao:{}",postingId);
+        return postingMapper.selectPostingById(postingId);
     }
-
+    public List<PostingListDto> selectPostingList(){
+        return postingMapper.selectPostingList();
+    }
     public int insertPosting(String memberId,String title, String contents){
         return postingMapper.insertPosting(memberId,title,contents);
     }

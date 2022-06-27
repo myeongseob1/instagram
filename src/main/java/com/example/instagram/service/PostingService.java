@@ -1,11 +1,14 @@
 package com.example.instagram.service;
 
 import com.example.instagram.dao.PostingDao;
-import com.example.instagram.domain.Posting;
+import com.example.instagram.dto.PostingFindDto;
+import com.example.instagram.dto.PostingListDto;
 import com.example.instagram.dto.PostingRegisterDto;
 import com.example.instagram.dto.VerifyDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -39,6 +42,20 @@ public class PostingService {
         return "success";
     }
 
+    public List<PostingListDto> getPostingList(){
+        return postingDao.selectPostingList();
+    }
+
+    public PostingFindDto getPostingById(Long postingId){
+        PostingFindDto posting = postingDao.selectPostingById(postingId);
+        log.info("serivce:{}",posting);
+        if(posting==null){
+            log.info("posting not exist");
+            return null;
+        }
+
+        return posting;
+    }
 
 
 
