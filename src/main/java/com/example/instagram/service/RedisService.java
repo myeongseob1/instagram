@@ -1,5 +1,6 @@
 package com.example.instagram.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -9,12 +10,10 @@ import java.time.Duration;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RedisService {
     private final RedisTemplate redisTemplate;
 
-    public RedisService(RedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
     // 키-벨류 설정
     public void setValues(String memberId, String token){
         ValueOperations<String, String> values = redisTemplate.opsForValue();

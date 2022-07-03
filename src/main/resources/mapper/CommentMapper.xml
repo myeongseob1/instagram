@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.instagram.mapper.CommentMapper">
+
+    <select id="selectCommentList" resultType="com.example.instagram.dto.CommentDto">
+        SELECT a.contents contents,a.register_time registerTime,b.nickname nickName
+        FROM comment a, member b
+        WHERE a.member_id = b.member_id
+        AND a.posting_id = #{postingId}
+    </select>
+
+    <insert id="insertComment">
+        INSERT INTO comment(member_id,posting_id,contents,register_time) VALUES (#{memberId},#{postingId},#{contents},utc_timestamp)
+    </insert>
+</mapper>

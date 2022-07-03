@@ -1,12 +1,11 @@
 package com.example.instagram.controller;
 
 import com.example.instagram.domain.Posting;
-import com.example.instagram.dto.PostingFindDto;
-import com.example.instagram.dto.PostingListDto;
-import com.example.instagram.dto.PostingRegisterDto;
+import com.example.instagram.dto.*;
 import com.example.instagram.service.PostingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -20,20 +19,18 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/posting")
-@Api(value = "Posting Controller")
+@RequiredArgsConstructor
+@Api(value = "PostingController")
 public class PostingController {
 
     private final PostingService postingService;
-
-    public PostingController(PostingService postingService) {
-        this.postingService = postingService;
-    }
 
     @ApiOperation(value="게시글 등록",notes = "작성한 게시글을 등록하는 API")
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String registerPosting(@RequestBody @Valid PostingRegisterDto postingRegisterDto) {
         String registerPosting = postingService.registerPosting(postingRegisterDto);
         if(!registerPosting.equals("success")){
+            //exception 처리를 하나 만들자
             return registerPosting;
         }
         return registerPosting;
@@ -42,7 +39,6 @@ public class PostingController {
     @GetMapping(value="", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public PostingFindDto findPostingById(@RequestParam @Valid Long postingId) {
         PostingFindDto posting = postingService.getPostingById(postingId);
-        log.info("controller:{}",posting);
         if(posting==null){
             return null;
         }
@@ -54,4 +50,28 @@ public class PostingController {
         List<PostingListDto> postingList = postingService.getPostingList();
         return postingList;
     }
+
+    @ApiOperation(value="게시글 삭제",notes = "선택한 게시글 삭제")
+    @PostMapping(value="/delete",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String deletePosting(@RequestBody @Valid PostingDeleteDto postingDeleteDto){
+        String deleteResult = postingService.deletePosting(postingDeleteDto);
+        if(!deleteResult.equals("success")){
+            //exception 처리를 하나 만들자
+            return deleteResult;
+        }
+        return deleteResult;
+
+    }
+    @ApiOperation(value="게시글 수정",notes = "선택한 게시글 수정")
+    @PostMapping(value="/modify",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String modifyPosting(@RequestBody @Valid PostingUpdateDto postingUpdateDto){
+        String modifyResult = postingService.modifyPosting(postingUpdateDto);
+        if(!modifyResult.equals("success")){
+            //exception 처리를 하나 만들자
+            return modifyResult;
+        }
+        return modifyResult;
+    }
+
+
 }

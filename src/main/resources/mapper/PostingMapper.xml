@@ -4,11 +4,10 @@
 <mapper namespace="com.example.instagram.mapper.PostingMapper">
 
     <select id="selectPostingById" resultType="com.example.instagram.dto.PostingFindDto">
-        SELECT a.posting_id postingId,b.nickname nickName,a.title title,
-        a.contents contents,a.register_time registerTime,a.views views
-        FROM posting a, member b
-        WHERE a.member_id = b.member_id
-        AND a.posting_id = #{postingId}
+        SELECT p.posting_id, p.title, p.contents, p.views, m.nickname, i.image_url from posting as p
+        INNER JOIN member as m on p.member_id = m.member_id
+        LEFT OUTER JOIN image as i on i.posting_id = p.posting_id
+        WHERE p.posting_id = #{postingId};
     </select>
 
     <select id="selectPostingList" resultType="com.example.instagram.dto.PostingListDto">
@@ -20,7 +19,19 @@
 
 
     <insert id="insertPosting">
-        INSERT INTO posting(member_id,title,contents,register_time) VALUES (#{memberId},#{title},#{contents},utc_timestamp)
+        INSERT INTO posting(member_id,title,contents,register_time)
+        VALUES (#{memberId},#{title},#{contents},utc_timestamp)
     </insert>
+
+    <delete id="deletePosting">
+        DELETE FROM posting WHERE posting_id = #{postingId} AND member_id = #{memberId}
+    </delete>
+
+    <update id="updatePosting">
+        UPDATE posting
+        SET title = #{title}, contents = #{contents}, update_time = utc_timestamp
+        WHERE member_id = #{memberId} AND posting_id = #{postingId}
+    </update>
+
 
 </mapper>

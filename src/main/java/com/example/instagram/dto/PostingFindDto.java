@@ -2,6 +2,8 @@ package com.example.instagram.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 
 @Data
 public class PostingFindDto {
@@ -11,4 +13,6 @@ public class PostingFindDto {
     private String contents;
     private String registerTime;
     private Long views;
+    private List<CommentDto> commentList;
+    private List<ImageDto> imageList;
 }

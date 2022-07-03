@@ -1,10 +1,9 @@
 package com.example.instagram.service;
 
+import com.example.instagram.dao.CommentDao;
 import com.example.instagram.dao.PostingDao;
-import com.example.instagram.dto.PostingFindDto;
-import com.example.instagram.dto.PostingListDto;
-import com.example.instagram.dto.PostingRegisterDto;
-import com.example.instagram.dto.VerifyDto;
+import com.example.instagram.dto.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,21 +11,14 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PostingService {
     private final PostingDao postingDao;
-    private final RedisService redisService;
     private final UserService userService;
-
-    public PostingService(PostingDao postingDao, RedisService redisService, UserService userService) {
-        this.postingDao = postingDao;
-        this.redisService = redisService;
-        this.userService = userService;
-    }
+    private final CommentDao commentDao;
 
     public String registerPosting(PostingRegisterDto postingRegisterDto){
-        VerifyDto verifyDto = new VerifyDto();
-        verifyDto.setMemberId(postingRegisterDto.getMemberId());
-        verifyDto.setJwtToken(postingRegisterDto.getJwtToken());
+        VerifyDto verifyDto = new VerifyDto(postingRegisterDto.getMemberId(),postingRegisterDto.getJwtToken());
         String secureResult = userService.verify(verifyDto);
 
         if(secureResult==null){
@@ -48,15 +40,49 @@ public class PostingService {
 
     public PostingFindDto getPostingById(Long postingId){
         PostingFindDto posting = postingDao.selectPostingById(postingId);
+        List<CommentDto> commentList = commentDao.selectCommentList(postingId);
+        posting.setCommentList(commentList);
         log.info("serivce:{}",posting);
         if(posting==null){
             log.info("posting not exist");
             return null;
         }
-
         return posting;
     }
 
 
+    public String deletePosting(PostingDeleteDto postingDeleteDto) {
+        VerifyDto verifyDto = new VerifyDto(postingDeleteDto.getMemberId(),postingDeleteDto.getJwtToken());
+        String secureResult = userService.verify(verifyDto);
 
+        if(secureResult==null){
+            log.info("token authorization fail");
+            return "token authorization fail";
+        }
+
+        int postingResult = postingDao.deletePosting(postingDeleteDto.getPostingId(),postingDeleteDto.getMemberId());
+        if(postingResult<=0){
+            log.info("delete fail");
+            return "delete fail";
+        }
+
+        return "success";
+
+    }
+    public String modifyPosting(PostingUpdateDto postingUpdateDto){
+        VerifyDto verifyDto = new VerifyDto(postingUpdateDto.getMemberId(),postingUpdateDto.getJwtToken());
+        String secureResult = userService.verify(verifyDto);
+
+        if(secureResult==null){
+            log.info("token authorization fail");
+            return "token authorization fail";
+        }
+
+        int postingResult = postingDao.updatePosting(postingUpdateDto.getPostingId(), postingUpdateDto.getMemberId(),postingUpdateDto.getTitle(),postingUpdateDto.getContents());
+        if(postingResult <= 0){
+            log.info("update fail");
+            return "update fail";
+        }
+        return "success";
+    }
 }

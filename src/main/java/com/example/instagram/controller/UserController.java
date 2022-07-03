@@ -6,6 +6,7 @@ import com.example.instagram.dto.VerifyDto;
 import com.example.instagram.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -25,15 +26,12 @@ import java.security.spec.InvalidKeySpecException;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/user")
-@Api(value = "User Controller")
+@RequiredArgsConstructor
+@Api(value = "UserController")
 public class UserController {
 
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @ApiOperation(value="회원가입",notes = "사용자의 정보 입력후 회원가입")
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

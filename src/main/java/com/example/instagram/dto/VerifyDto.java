@@ -1,9 +1,11 @@
 package com.example.instagram.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 public class VerifyDto {
-    private String memberId;
-    private String jwtToken;
+    private final String memberId;
+    private final String jwtToken;
 }

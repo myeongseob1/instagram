@@ -5,6 +5,7 @@ import com.example.instagram.domain.Member;
 import com.example.instagram.domain.MemberSecure;
 import com.example.instagram.dto.UserDto;
 import com.example.instagram.dto.VerifyDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -23,15 +24,11 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserDao userDao;
     private final JwtTokenService jwtTokenService;
     private final RedisService redisService;
-    public UserService(UserDao userDao, JwtTokenService jwtTokenService, RedisService redisService) {
-        this.userDao = userDao;
-        this.jwtTokenService = jwtTokenService;
-        this.redisService = redisService;
-    }
 
 
     public Member login(UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException {

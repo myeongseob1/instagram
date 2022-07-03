@@ -18,7 +18,6 @@ public class PostingDao {
     }
 
     public PostingFindDto selectPostingById(Long postingId){
-        log.info("dao:{}",postingId);
         return postingMapper.selectPostingById(postingId);
     }
     public List<PostingListDto> selectPostingList(){
@@ -28,4 +27,10 @@ public class PostingDao {
         return postingMapper.insertPosting(memberId,title,contents);
     }
 
+    public int deletePosting(Long postingId,String memberId) {
+        return postingMapper.deletePosting(postingId,memberId);
+    }
+    public int updatePosting(Long postingId,String memberId,String title, String contents){
+        return postingMapper.updatePosting(postingId, memberId,title, contents);
+    }
 }
