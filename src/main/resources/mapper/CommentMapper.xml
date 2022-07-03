@@ -13,4 +13,15 @@
     <insert id="insertComment">
         INSERT INTO comment(member_id,posting_id,contents,register_time) VALUES (#{memberId},#{postingId},#{contents},utc_timestamp)
     </insert>
+
+    <delete id="deleteComment">
+        DELETE FROM comment WHERE comment_id = #{commentId}
+    </delete>
+
+    <update id="updateComment">
+        UPDATE comment
+        SET contents = #{contents}, update_time = utc_timestamp
+        WHERE comment_id = #{commentId}
+    </update>
+
 </mapper>

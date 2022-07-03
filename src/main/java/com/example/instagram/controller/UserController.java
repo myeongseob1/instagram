@@ -67,11 +67,7 @@ public class UserController {
     @ApiOperation(value="사용자 검증",notes = "사용중인 User가 맞는지 jwtToken을 기반으로 검증하는 과정")
     @PostMapping(value = "/verify", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String verifyUser(@RequestBody @Valid VerifyDto verifyDto) {
-        String result = userService.verify(verifyDto);
-
-        if(result==null){
-            return "Id verify Check Fail";
-        }
+        userService.verify(verifyDto);
         return "ID verify Check Success";
     }
 }

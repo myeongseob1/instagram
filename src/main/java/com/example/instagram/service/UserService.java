@@ -5,6 +5,8 @@ import com.example.instagram.domain.Member;
 import com.example.instagram.domain.MemberSecure;
 import com.example.instagram.dto.UserDto;
 import com.example.instagram.dto.VerifyDto;
+import com.example.instagram.exception.CommonErrorException;
+import com.example.instagram.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,13 +35,8 @@ public class UserService {
 
     public Member login(UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException {
         Member member = userDao.getUser(userDto.getUserId());
-        if(member == null || StringUtils.isBlank(member.getUserId())){
-            log.warn("user not exist");
-            return null;
-        }
-        if(!member.getUserPw().equals(encrypt(userDto.getUserPw()))){
-            log.warn("password error");
-            return null;
+        if(member == null || StringUtils.isBlank(member.getUserId())||!member.getUserPw().equals(encrypt(userDto.getUserPw()))){
+            throw new CommonErrorException(ErrorCode.USER_LOGIN_ERROR);
         }
 
         MemberSecure memberSecure = userDao.getUserSecure(member.getMemberId());
@@ -62,7 +59,7 @@ public class UserService {
     public String idValidChk(String userId){
         Member member = userDao.getUser(userId);
         if(member != null){
-            return null;
+            throw new CommonErrorException(ErrorCode.USER_ID_DUPLICATE_ERROR);
         }
         return "success";
     }
@@ -97,25 +94,22 @@ public class UserService {
 
         int keyResult = userDao.insertUserSecure(memberId,privateKey,publicKey);
         if(keyResult <= 0) {
-            log.error("DB key insert Error");
-            return null;
+            throw new CommonErrorException(ErrorCode.USER_INSERT_ERROR);
         }
 
         int result = userDao.insertUser(memberId, userDto.getName(),userDto.getEmail(),userDto.getUserId(),userPw,userDto.getPhone(),userDto.getNickname());
 
         if(result <= 0){
-            log.error("DB user insert error");
-            return null;
+            throw new CommonErrorException(ErrorCode.USER_INSERT_ERROR);
         }
         return memberId;
     }
 
-    public String verify(VerifyDto verifyDto){
+    public void verify(VerifyDto verifyDto){
         String verifyToken = redisService.getValues(verifyDto.getMemberId());
         if(!verifyDto.getJwtToken().equals(verifyToken)){
-            return null;
+            throw new CommonErrorException(ErrorCode.USER_TOKEN_AUTHORIZATION_ERROR);
         }
-        return "success";
     }
 
     /**

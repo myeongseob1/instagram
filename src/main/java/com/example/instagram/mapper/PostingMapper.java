@@ -11,6 +11,7 @@ public interface PostingMapper {
     int insertPosting(String memberId,String title, String contents);
     PostingFindDto selectPostingById(Long postingId);
     List<PostingListDto> selectPostingList();
-    int deletePosting(Long postingId,String memberId);
-    int updatePosting(Long postingId,String memberId,String title, String contents);
+    int deletePosting(Long postingId);
+    int updatePosting(Long postingId,String title, String contents);
+    int insertFile(Long postingId, String imageUrl);
 }

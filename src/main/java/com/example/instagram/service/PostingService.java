@@ -3,10 +3,15 @@ package com.example.instagram.service;
 import com.example.instagram.dao.CommentDao;
 import com.example.instagram.dao.PostingDao;
 import com.example.instagram.dto.*;
+import com.example.instagram.exception.CommonErrorException;
+import com.example.instagram.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -17,21 +22,18 @@ public class PostingService {
     private final UserService userService;
     private final CommentDao commentDao;
 
-    public String registerPosting(PostingRegisterDto postingRegisterDto){
+    public int registerPosting(PostingRegisterDto postingRegisterDto, MultipartFile file) throws IOException {
         VerifyDto verifyDto = new VerifyDto(postingRegisterDto.getMemberId(),postingRegisterDto.getJwtToken());
-        String secureResult = userService.verify(verifyDto);
-
-        if(secureResult==null){
-            log.info("token authorization fail");
-            return "token authorization fail";
+        userService.verify(verifyDto);
+        if(!file.isEmpty()){
+            String urlFile = "D:\\"+file.getOriginalFilename();
+            uploadFile(file);
         }
         int registerResult = postingDao.insertPosting(postingRegisterDto.getMemberId(), postingRegisterDto.getTitle(), postingRegisterDto.getContents());
         if(registerResult <= 0){
-            log.info("insert fail");
-            return "insert fail";
+            throw new CommonErrorException(ErrorCode.POSTING_INSERT_ERROR);
         }
-
-        return "success";
+        return registerResult;
     }
 
     public List<PostingListDto> getPostingList(){
@@ -44,45 +46,35 @@ public class PostingService {
         posting.setCommentList(commentList);
         log.info("serivce:{}",posting);
         if(posting==null){
-            log.info("posting not exist");
-            return null;
+            throw new CommonErrorException(ErrorCode.POSTING_SELECT_ERROR);
         }
         return posting;
     }
 
 
-    public String deletePosting(PostingDeleteDto postingDeleteDto) {
+    public int deletePosting(PostingDeleteDto postingDeleteDto) {
         VerifyDto verifyDto = new VerifyDto(postingDeleteDto.getMemberId(),postingDeleteDto.getJwtToken());
-        String secureResult = userService.verify(verifyDto);
+        userService.verify(verifyDto);
 
-        if(secureResult==null){
-            log.info("token authorization fail");
-            return "token authorization fail";
-        }
-
-        int postingResult = postingDao.deletePosting(postingDeleteDto.getPostingId(),postingDeleteDto.getMemberId());
+        int postingResult = postingDao.deletePosting(postingDeleteDto.getPostingId());
         if(postingResult<=0){
-            log.info("delete fail");
-            return "delete fail";
+            throw new CommonErrorException(ErrorCode.POSTING_DELETE_ERROR);
         }
-
-        return "success";
+        return postingResult;
 
     }
-    public String modifyPosting(PostingUpdateDto postingUpdateDto){
+    public int modifyPosting(PostingUpdateDto postingUpdateDto){
         VerifyDto verifyDto = new VerifyDto(postingUpdateDto.getMemberId(),postingUpdateDto.getJwtToken());
-        String secureResult = userService.verify(verifyDto);
+        userService.verify(verifyDto);
 
-        if(secureResult==null){
-            log.info("token authorization fail");
-            return "token authorization fail";
-        }
-
-        int postingResult = postingDao.updatePosting(postingUpdateDto.getPostingId(), postingUpdateDto.getMemberId(),postingUpdateDto.getTitle(),postingUpdateDto.getContents());
+        int postingResult = postingDao.updatePosting(postingUpdateDto.getPostingId(),postingUpdateDto.getTitle(),postingUpdateDto.getContents());
         if(postingResult <= 0){
-            log.info("update fail");
-            return "update fail";
+            throw new CommonErrorException(ErrorCode.POSTING_UPDATE_ERROR);
         }
-        return "success";
+        return postingResult;
+    }
+
+    public void uploadFile(MultipartFile file) throws IOException {
+        file.transferTo(new File("D:\\"+file.getOriginalFilename()));
     }
 }

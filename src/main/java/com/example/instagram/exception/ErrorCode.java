@@ -1,0 +1,34 @@
+package com.example.instagram.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
+
+@AllArgsConstructor
+@Getter
+public enum ErrorCode {
+    //USER ERROR
+    USER_LOGIN_ERROR(HttpStatus.BAD_REQUEST,100,"USER LOGIN ERROR"),
+    USER_TOKEN_AUTHORIZATION_ERROR(HttpStatus.BAD_REQUEST,101,"USER TOKEN AUTHORIZATION ERROR"),
+    USER_ID_DUPLICATE_ERROR(HttpStatus.BAD_REQUEST,102,"USER ID DUPLICATE ERROR"),
+    USER_INSERT_ERROR(HttpStatus.BAD_REQUEST,103,"USER INSERT ERROR"),
+
+
+    //POSTING ERROR
+    POSTING_SELECT_ERROR(HttpStatus.BAD_REQUEST,200,"POSTING SELECT ERROR"),
+    POSTING_INSERT_ERROR(HttpStatus.BAD_REQUEST,201,"POSTING INSERT ERROR"),
+    POSTING_UPDATE_ERROR(HttpStatus.BAD_REQUEST,202,"POSTING UPDATE ERROR"),
+    POSTING_DELETE_ERROR(HttpStatus.BAD_REQUEST,203,"POSTING DELETE ERROR"),
+
+    //COMMENT ERROR
+    COMMENT_SELECT_ERROR(HttpStatus.BAD_REQUEST,300,"COMMENT SELECT ERROR"),
+    COMMENT_INSERT_ERROR(HttpStatus.BAD_REQUEST,301,"COMMENT INSERT ERROR"),
+    COMMENT_UPDATE_ERROR(HttpStatus.BAD_REQUEST,302,"COMMENT UPDATE ERROR"),
+    COMMENT_DELETE_ERROR(HttpStatus.BAD_REQUEST,303,"COMMENT DELETE ERROR"),
+    ;
+
+    private HttpStatus status;
+    private int errorCode;
+    private String message;
+}

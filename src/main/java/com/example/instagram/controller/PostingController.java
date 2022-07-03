@@ -2,6 +2,8 @@ package com.example.instagram.controller;
 
 import com.example.instagram.domain.Posting;
 import com.example.instagram.dto.*;
+import com.example.instagram.exception.CommonErrorException;
+import com.example.instagram.exception.ErrorCode;
 import com.example.instagram.service.PostingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -27,51 +31,54 @@ public class PostingController {
 
     @ApiOperation(value="게시글 등록",notes = "작성한 게시글을 등록하는 API")
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String registerPosting(@RequestBody @Valid PostingRegisterDto postingRegisterDto) {
-        String registerPosting = postingService.registerPosting(postingRegisterDto);
-        if(!registerPosting.equals("success")){
-            //exception 처리를 하나 만들자
-            return registerPosting;
+    public String registerPosting(@RequestBody @Valid PostingRegisterDto postingRegisterDto, @RequestPart MultipartFile file) throws IOException {
+        int registerResult = postingService.registerPosting(postingRegisterDto,file);
+        if(registerResult<=0){
+            throw new CommonErrorException(ErrorCode.POSTING_INSERT_ERROR);
         }
-        return registerPosting;
+        return "success";
     }
+
     @ApiOperation(value="게시글 조회",notes = "선택한 게시글 단건 조회")
-    @GetMapping(value="", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PostingFindDto findPostingById(@RequestParam @Valid Long postingId) {
+    @GetMapping(value="/{postingId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PostingFindDto findPostingById(@PathVariable @Valid Long postingId) {
         PostingFindDto posting = postingService.getPostingById(postingId);
         if(posting==null){
-            return null;
+            throw new CommonErrorException(ErrorCode.POSTING_SELECT_ERROR);
         }
         return posting;
     }
+
     @ApiOperation(value="게시글 전체목록 조회",notes = "전체 게시글 조회")
     @GetMapping(value="/list", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostingListDto> findPostingList() {
-        List<PostingListDto> postingList = postingService.getPostingList();
-        return postingList;
+        return postingService.getPostingList();
     }
 
     @ApiOperation(value="게시글 삭제",notes = "선택한 게시글 삭제")
-    @PostMapping(value="/delete",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String deletePosting(@RequestBody @Valid PostingDeleteDto postingDeleteDto){
-        String deleteResult = postingService.deletePosting(postingDeleteDto);
-        if(!deleteResult.equals("success")){
-            //exception 처리를 하나 만들자
-            return deleteResult;
+        int deleteResult = postingService.deletePosting(postingDeleteDto);
+        if(deleteResult<=0){
+            throw new CommonErrorException(ErrorCode.POSTING_DELETE_ERROR);
         }
-        return deleteResult;
-
+        return "success";
     }
     @ApiOperation(value="게시글 수정",notes = "선택한 게시글 수정")
     @PostMapping(value="/modify",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String modifyPosting(@RequestBody @Valid PostingUpdateDto postingUpdateDto){
-        String modifyResult = postingService.modifyPosting(postingUpdateDto);
-        if(!modifyResult.equals("success")){
-            //exception 처리를 하나 만들자
-            return modifyResult;
+        int modifyResult = postingService.modifyPosting(postingUpdateDto);
+        if(modifyResult<=0){
+            throw new CommonErrorException(ErrorCode.POSTING_UPDATE_ERROR);
         }
-        return modifyResult;
+        return "success";
     }
 
+    @ApiOperation(value="파일 업로드",notes = "사진파일 업로드")
+    @PostMapping(value = "/upload")
+    public String uploadFile(@RequestPart MultipartFile file) throws IOException {
+        postingService.uploadFile(file);
+        return "success";
+    }
 
 }

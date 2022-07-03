@@ -4,7 +4,8 @@
 <mapper namespace="com.example.instagram.mapper.PostingMapper">
 
     <select id="selectPostingById" resultType="com.example.instagram.dto.PostingFindDto">
-        SELECT p.posting_id, p.title, p.contents, p.views, m.nickname, i.image_url from posting as p
+        SELECT p.posting_id, p.title, p.contents, p.views, m.nickname, i.image_url, p.register_time
+        from posting as p
         INNER JOIN member as m on p.member_id = m.member_id
         LEFT OUTER JOIN image as i on i.posting_id = p.posting_id
         WHERE p.posting_id = #{postingId};
@@ -24,14 +25,19 @@
     </insert>
 
     <delete id="deletePosting">
-        DELETE FROM posting WHERE posting_id = #{postingId} AND member_id = #{memberId}
+        DELETE FROM posting WHERE posting_id = #{postingId}
     </delete>
 
     <update id="updatePosting">
         UPDATE posting
         SET title = #{title}, contents = #{contents}, update_time = utc_timestamp
-        WHERE member_id = #{memberId} AND posting_id = #{postingId}
+        WHERE posting_id = #{postingId}
     </update>
+
+    <insert id="insertPosting">
+        INSERT INTO image(posting_id,image_url)
+        VALUES (#{postingId},#{imageUrl})
+    </insert>
 
 
 </mapper>
