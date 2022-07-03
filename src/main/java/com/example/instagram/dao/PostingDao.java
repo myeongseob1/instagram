@@ -6,6 +6,7 @@ import com.example.instagram.mapper.PostingMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,11 +23,17 @@ public class PostingDao {
     public List<PostingListDto> selectPostingList(){
         return postingMapper.selectPostingList();
     }
-    public int insertPosting(String memberId,String title, String contents){
-        return postingMapper.insertPosting(memberId,title,contents);
-    }
-    public int insertFile(Long postingId,String imageUrl){
-        return postingMapper.insertFile(postingId,imageUrl);
+    @Transactional
+    public boolean insertPosting(String memberId,String title, String contents,long postingId,String imageUrl){
+        if(0>= postingMapper.insertPosting(postingId,memberId,title,contents)){
+            return false;
+        }
+        if(imageUrl!=null){
+            if(0>=postingMapper.insertFile(postingId,imageUrl)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public int deletePosting(Long postingId) {

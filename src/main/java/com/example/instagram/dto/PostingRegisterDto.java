@@ -1,6 +1,7 @@
 package com.example.instagram.dto;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
@@ -12,5 +13,6 @@ public class PostingRegisterDto {
     private String title;
     @NotBlank(message = "내용을 입력하세요")
     private String contents;
+    MultipartFile file;
 
 }

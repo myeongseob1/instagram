@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface PostingMapper {
-    int insertPosting(String memberId,String title, String contents);
+    int insertPosting(Long postingId,String memberId,String title, String contents);
     PostingFindDto selectPostingById(Long postingId);
     List<PostingListDto> selectPostingList();
     int deletePosting(Long postingId);

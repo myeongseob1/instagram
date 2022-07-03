@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -22,15 +23,19 @@ public class PostingService {
     private final UserService userService;
     private final CommentDao commentDao;
 
-    public int registerPosting(PostingRegisterDto postingRegisterDto, MultipartFile file) throws IOException {
+    public boolean registerPosting(PostingRegisterDto postingRegisterDto) throws IOException {
         VerifyDto verifyDto = new VerifyDto(postingRegisterDto.getMemberId(),postingRegisterDto.getJwtToken());
         userService.verify(verifyDto);
-        if(!file.isEmpty()){
-            String urlFile = "D:\\"+file.getOriginalFilename();
-            uploadFile(file);
+        Random random = new Random();
+        long postingId = random.nextInt(1000000000);
+        String urlFile = null;
+        if(!postingRegisterDto.getFile().isEmpty()){
+            urlFile = "D:\\"+postingRegisterDto.getFile().getOriginalFilename();
+            uploadFile(postingRegisterDto.getFile());
         }
-        int registerResult = postingDao.insertPosting(postingRegisterDto.getMemberId(), postingRegisterDto.getTitle(), postingRegisterDto.getContents());
-        if(registerResult <= 0){
+
+        boolean registerResult = postingDao.insertPosting(postingRegisterDto.getMemberId(), postingRegisterDto.getTitle(), postingRegisterDto.getContents(),postingId,urlFile);
+        if(!registerResult){
             throw new CommonErrorException(ErrorCode.POSTING_INSERT_ERROR);
         }
         return registerResult;

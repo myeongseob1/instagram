@@ -20,8 +20,8 @@
 
 
     <insert id="insertPosting">
-        INSERT INTO posting(member_id,title,contents,register_time)
-        VALUES (#{memberId},#{title},#{contents},utc_timestamp)
+        INSERT INTO posting(posting_id,member_id,title,contents,register_time)
+        VALUES (#{postingId},#{memberId},#{title},#{contents},utc_timestamp)
     </insert>
 
     <delete id="deletePosting">
@@ -34,7 +34,7 @@
         WHERE posting_id = #{postingId}
     </update>
 
-    <insert id="insertPosting">
+    <insert id="insertFile">
         INSERT INTO image(posting_id,image_url)
         VALUES (#{postingId},#{imageUrl})
     </insert>

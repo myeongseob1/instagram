@@ -30,10 +30,10 @@ public class PostingController {
     private final PostingService postingService;
 
     @ApiOperation(value="게시글 등록",notes = "작성한 게시글을 등록하는 API")
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String registerPosting(@RequestBody @Valid PostingRegisterDto postingRegisterDto, @RequestPart MultipartFile file) throws IOException {
-        int registerResult = postingService.registerPosting(postingRegisterDto,file);
-        if(registerResult<=0){
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String registerPosting(PostingRegisterDto postingRegisterDto) throws IOException {
+        boolean registerResult = postingService.registerPosting(postingRegisterDto);
+        if(!registerResult){
             throw new CommonErrorException(ErrorCode.POSTING_INSERT_ERROR);
         }
         return "success";
