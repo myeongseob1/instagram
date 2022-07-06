@@ -29,7 +29,7 @@ public class PostingService {
         Random random = new Random();
         long postingId = random.nextInt(1000000000);
         String urlFile = null;
-        if(!postingRegisterDto.getFile().isEmpty()){
+        if(postingRegisterDto.getFile()!=null){
             urlFile = "D:\\"+postingRegisterDto.getFile().getOriginalFilename();
             uploadFile(postingRegisterDto.getFile());
         }

@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -71,13 +70,6 @@ public class PostingController {
         if(modifyResult<=0){
             throw new CommonErrorException(ErrorCode.POSTING_UPDATE_ERROR);
         }
-        return "success";
-    }
-
-    @ApiOperation(value="파일 업로드",notes = "사진파일 업로드")
-    @PostMapping(value = "/upload")
-    public String uploadFile(@RequestPart MultipartFile file) throws IOException {
-        postingService.uploadFile(file);
         return "success";
     }
 

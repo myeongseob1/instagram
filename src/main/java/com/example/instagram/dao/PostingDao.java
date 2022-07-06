@@ -24,7 +24,7 @@ public class PostingDao {
         return postingMapper.selectPostingList();
     }
     @Transactional
-    public boolean insertPosting(String memberId,String title, String contents,long postingId,String imageUrl){
+    public boolean  insertPosting(String memberId,String title, String contents,long postingId,String imageUrl){
         if(0>= postingMapper.insertPosting(postingId,memberId,title,contents)){
             return false;
         }

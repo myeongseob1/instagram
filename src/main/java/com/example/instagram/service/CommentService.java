@@ -17,16 +17,16 @@ public class CommentService {
     private final CommentDao commentDao;
     private final UserService userService;
 
-    public String registerComment(CommentRegisterDto commentRegisterDto){
+    public int registerComment(CommentRegisterDto commentRegisterDto){
         VerifyDto verifyDto = new VerifyDto(commentRegisterDto.getMemberId(),commentRegisterDto.getJwtToken());
         userService.verify(verifyDto);
         int registerResult = commentDao.insertComment(commentRegisterDto.getMemberId(),commentRegisterDto.getPostingId(),commentRegisterDto.getContents());
         if(registerResult <= 0){
             throw new CommonErrorException(ErrorCode.COMMENT_INSERT_ERROR);
         }
-        return "success";
+        return registerResult;
     }
-    public String deleteComment(CommentDeleteDto commentDeleteDto) {
+    public int deleteComment(CommentDeleteDto commentDeleteDto) {
         VerifyDto verifyDto = new VerifyDto(commentDeleteDto.getMemberId(),commentDeleteDto.getJwtToken());
         userService.verify(verifyDto);
 
@@ -34,10 +34,10 @@ public class CommentService {
         if(commentResult<=0){
             throw new CommonErrorException(ErrorCode.COMMENT_DELETE_ERROR);
         }
-        return "success";
+        return commentResult;
 
     }
-    public String modifyComment(CommentUpdateDto commentUpdateDto){
+    public int modifyComment(CommentUpdateDto commentUpdateDto){
         VerifyDto verifyDto = new VerifyDto(commentUpdateDto.getMemberId(),commentUpdateDto.getJwtToken());
         userService.verify(verifyDto);
 
@@ -45,7 +45,7 @@ public class CommentService {
         if(commentResult <= 0){
             throw new CommonErrorException(ErrorCode.COMMENT_UPDATE_ERROR);
         }
-        return "success";
+        return commentResult;
     }
 
 
