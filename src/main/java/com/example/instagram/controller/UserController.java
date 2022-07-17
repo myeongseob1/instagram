@@ -8,6 +8,7 @@ import com.example.instagram.exception.ErrorCode;
 import com.example.instagram.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -47,8 +48,8 @@ public class UserController {
     }
 
     @ApiOperation(value = "ID 중복확인",notes = "회원가입시 아이디 중복확인")
-    @GetMapping(value="/idValidChk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String idValidChk(@RequestParam @Valid String userId){
+    @GetMapping(value="/idValidChk")
+    public String idValidChk(@ApiParam(value = "사용자의 ID") @RequestParam @Valid String userId){
         String result = userService.idValidChk(userId);
         if(result==null){
             throw new CommonErrorException(ErrorCode.USER_ID_DUPLICATE_ERROR);

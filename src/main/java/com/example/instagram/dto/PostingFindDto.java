@@ -13,6 +13,7 @@ public class PostingFindDto {
     private String contents;
     private String registerTime;
     private Long views;
+    Long likeCnt;
     private List<CommentDto> commentList;
     private List<ImageDto> imageList;
 }

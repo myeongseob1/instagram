@@ -42,4 +42,8 @@ public class PostingDao {
     public int updatePosting(Long postingId,String title, String contents){
         return postingMapper.updatePosting(postingId,title, contents);
     }
+
+    public int insertPostingLike(Long postingId,String memberId){
+        return postingMapper.insertPostingLike(postingId,memberId);
+    }
 }

@@ -33,7 +33,6 @@ public class PostingService {
             urlFile = "D:\\"+postingRegisterDto.getFile().getOriginalFilename();
             uploadFile(postingRegisterDto.getFile());
         }
-
         boolean registerResult = postingDao.insertPosting(postingRegisterDto.getMemberId(), postingRegisterDto.getTitle(), postingRegisterDto.getContents(),postingId,urlFile);
         if(!registerResult){
             throw new CommonErrorException(ErrorCode.POSTING_INSERT_ERROR);
@@ -62,11 +61,11 @@ public class PostingService {
         userService.verify(verifyDto);
 
         int postingResult = postingDao.deletePosting(postingDeleteDto.getPostingId());
+
         if(postingResult<=0){
             throw new CommonErrorException(ErrorCode.POSTING_DELETE_ERROR);
         }
         return postingResult;
-
     }
     public int modifyPosting(PostingUpdateDto postingUpdateDto){
         VerifyDto verifyDto = new VerifyDto(postingUpdateDto.getMemberId(),postingUpdateDto.getJwtToken());
@@ -81,5 +80,18 @@ public class PostingService {
 
     public void uploadFile(MultipartFile file) throws IOException {
         file.transferTo(new File("D:\\"+file.getOriginalFilename()));
+    }
+
+    public int likePosting(PostingLikeDto postingLikeDto){
+        VerifyDto verifyDto = new VerifyDto(postingLikeDto.getMemberId(),postingLikeDto.getJwtToken());
+        userService.verify(verifyDto);
+
+        int postingResult = postingDao.insertPostingLike(postingLikeDto.getPostingId(), postingLikeDto.getMemberId());
+
+        if(postingResult <=0){
+            throw new CommonErrorException(ErrorCode.POSTING_LIKE_ERROR);
+        }
+
+        return postingResult;
     }
 }

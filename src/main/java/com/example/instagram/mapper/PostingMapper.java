@@ -14,4 +14,5 @@ public interface PostingMapper {
     int deletePosting(Long postingId);
     int updatePosting(Long postingId,String title, String contents);
     int insertFile(Long postingId, String imageUrl);
+    int insertPostingLike(Long postingId, String memberId);
 }

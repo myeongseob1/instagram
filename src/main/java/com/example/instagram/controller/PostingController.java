@@ -1,6 +1,5 @@
 package com.example.instagram.controller;
 
-import com.example.instagram.domain.Posting;
 import com.example.instagram.dto.*;
 import com.example.instagram.exception.CommonErrorException;
 import com.example.instagram.exception.ErrorCode;
@@ -39,7 +38,7 @@ public class PostingController {
     }
 
     @ApiOperation(value="게시글 조회",notes = "선택한 게시글 단건 조회")
-    @GetMapping(value="/{postingId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/{postingId}")
     public PostingFindDto findPostingById(@PathVariable @Valid Long postingId) {
         PostingFindDto posting = postingService.getPostingById(postingId);
         if(posting==null){
@@ -49,7 +48,7 @@ public class PostingController {
     }
 
     @ApiOperation(value="게시글 전체목록 조회",notes = "전체 게시글 조회")
-    @GetMapping(value="/list", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/list")//get은 이거 하지말자-> consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostingListDto> findPostingList() {
         return postingService.getPostingList();
     }
@@ -73,4 +72,13 @@ public class PostingController {
         return "success";
     }
 
+    @ApiOperation(value = "좋아요", notes = "특정 유저가 글에 대해 좋아요")
+    @PostMapping(value="/like",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String likePosting(@RequestBody @Valid PostingLikeDto likeDto){
+        int likeResult = postingService.likePosting(likeDto);
+        if(likeResult <= 0){
+            throw new CommonErrorException(ErrorCode.POSTING_LIKE_ERROR);
+        }
+        return "success";
+    }
 }

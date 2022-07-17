@@ -47,8 +47,4 @@ public class CommentService {
         }
         return commentResult;
     }
-
-
-
-
 }

@@ -2,42 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.instagram.mapper.PostingMapper">
-
     <select id="selectPostingById" resultType="com.example.instagram.dto.PostingFindDto">
-        SELECT p.posting_id, p.title, p.contents, p.views, m.nickname, i.image_url, p.register_time
-        from posting as p
-        INNER JOIN member as m on p.member_id = m.member_id
-        LEFT OUTER JOIN image as i on i.posting_id = p.posting_id
-        WHERE p.posting_id = #{postingId};
+        select p.posting_id, p.member_id, p.title, p.contents, p.views, m.nickname, i.image_url, p.register_time, c.cnt AS like_cnt
+        from (select count(*) as cnt from likes where likes.posting_id=#{postingId}) as c, posting as p
+        inner join member as m on p.member_id = m.member_id
+        left join image as i on i.posting_id = p.posting_id
+        where p.posting_id = #{postingId}
     </select>
-
     <select id="selectPostingList" resultType="com.example.instagram.dto.PostingListDto">
         SELECT a.posting_id postingId,b.nickname nickName,a.title title,
         a.contents contents,a.register_time registerTime,a.views views
         FROM posting a, member b
         WHERE a.member_id = b.member_id
     </select>
-
-
     <insert id="insertPosting">
         INSERT INTO posting(posting_id,member_id,title,contents,register_time)
         VALUES (#{postingId},#{memberId},#{title},#{contents},utc_timestamp)
     </insert>
-
     <delete id="deletePosting">
         DELETE FROM posting WHERE posting_id = #{postingId}
     </delete>
-
     <update id="updatePosting">
         UPDATE posting
         SET title = #{title}, contents = #{contents}, update_time = utc_timestamp
         WHERE posting_id = #{postingId}
     </update>
-
     <insert id="insertFile">
         INSERT INTO image(posting_id,image_url)
         VALUES (#{postingId},#{imageUrl})
     </insert>
-
-
+    <insert id="insertPostingLike">
+        INSERT INTO likes(member_id,posting_id)
+        VALUES (#{memberId},#{postingId})
+    </insert>
+    <delete id="deletePostingLike">
+        DELETE FROM likes
+        WHERE posting_id = #{postingId}
+        AND member_id = #{memberId}
+    </delete>
 </mapper>
